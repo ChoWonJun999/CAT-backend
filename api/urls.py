@@ -1,18 +1,19 @@
-from django.urls import path
-from .views import *
+from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-
-
-urlpatterns = [
-    path('api/csrf/', csrf, name='csrf'),
-
-    path('login', LoginView.as_view(), name='login'),
-]
-
+from .views import *
+from rest_framework_simplejwt.views import TokenRefreshView
 
 router = DefaultRouter()
-router.register('register', RegisterViewset, basename='register')
-urlpatterns += router.urls
+router.register(r'register', RegisterViewSet, basename='register')
+router.register(r'balance', BalanceViewSet, basename='balance')
+router.register(r'orders', OrdersViewSet, basename='orders')
+router.register(r'trade', TradeViewSet, basename='trade')
 
-# for urls in urlpatterns:
-#     print(urls)
+urlpatterns = [
+    path('', include(router.urls)),
+    path('login/', LoginViewSet.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+]
+
+# for url in router.urls:
+#     print(url)
